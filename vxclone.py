@@ -19,8 +19,8 @@ PORTS = [os.path.join(DEV, port) for port in os.listdir(DEV)
 ACK = chr(6)
 DATASIZE = 16211
 CHECKBYTES = [0x611, 0x691, 0x3f52]
-HIRAGANA = ''.join([unichr(n) for n in range(0x3040, 0x30a0)])
-KATAKANA = ''.join([unichr(n) for n in range(0x30a0, 0x3100)])
+HIRAGANA = ''.join([chr(n) for n in range(0x3040, 0x30a0)])
+KATAKANA = ''.join([chr(n) for n in range(0x30a0, 0x3100)])
 KANJI = [  # box, 0x56d7, used as placeholder for unidentified Kanji
     0x611b, 0x5727, 0x4f0a, 0x4f4d, 0x4e95, 0x80b2, 0x4e00, 0x8328,
     0x82f1, 0x885b, 0x8d8a, 0x5186, 0x9060, 0x6a2a, 0x5ca1, 0x6c96,
@@ -55,17 +55,17 @@ CHARACTERS = { # two character sets, 0 and 1, total 512 characters
 # from http://hse.dyndns.org/hiroto/RFY_LAB/vx7/e/vx7_8510.htm
     'digits': '0123456789',
     'alphabetic': 'ABCDEFGHIJKLMNOPQRSTUVWXYZ',
-    'symbols': u'.,:;!"#$%&\x27()*+-\u22c5=<>?@[\u00a5]^_\\{|}\u2192\u2190' \
-      u'\u25b2\u25bc~\u203c\u00f7\u00d7\u221a\u03bb' \
-      u'\u03bc\u03c0\u03c6\u03c9\u03a9\u2103\u2109\u00a3' \
-      u'\u00b1\u222b\u266a\u266b\u266d\u23b5\u23be\u23cc' \
-      u'\u00b7\u2642\u2640\u2564',
+    'symbols': '.,:;!"#$%&\x27()*+-\u22c5=<>?@[\u00a5]^_\\{|}\u2192\u2190' \
+      '\u25b2\u25bc~\u203c\u00f7\u00d7\u221a\u03bb' \
+      '\u03bc\u03c0\u03c6\u03c9\u03a9\u2103\u2109\u00a3' \
+      '\u00b1\u222b\u266a\u266b\u266d\u23b5\u23be\u23cc' \
+      '\u00b7\u2642\u2640\u2564',
     'hiragana': HIRAGANA[0x2:0xb:2] + HIRAGANA[0xb:0x14:2] + \
       HIRAGANA[0x15:0x1e:2] + HIRAGANA[0x1f:0x22:2] + HIRAGANA[0x24:29] + \
       HIRAGANA[0x2a:0x2f:2] + HIRAGANA[0x2f:0x3c:3] + HIRAGANA[0x3f:43] + \
       HIRAGANA[0x44:0x49:2] + HIRAGANA[0x49:0x4e] + HIRAGANA[0x4f:0x54] + \
       HIRAGANA[0x0c:0x15:2] + HIRAGANA[0x16:0x1f:2] + HIRAGANA[0x20:0x23:2] + \
-      HIRAGANA[0x25:0x2a:2] + u'\u3002\u3001' + \
+      HIRAGANA[0x25:0x2a:2] + '\u3002\u3001' + \
       HIRAGANA[0x30:0x3d:3] + HIRAGANA[0x31:0x3e:3] + \
       HIRAGANA[0x1:0xa:2] + HIRAGANA[0x43:0x48:2] + HIRAGANA[0x23],
     'katakana': KATAKANA[0x2:0xb:2] + KATAKANA[0xb:0x14:2] + \
@@ -79,7 +79,7 @@ CHARACTERS = { # two character sets, 0 and 1, total 512 characters
 CHARACTERS['vx7r'] = CHARACTERS['digits'] + ' ' + CHARACTERS['alphabetic'] + \
     CHARACTERS['alphabetic'].lower() + CHARACTERS['symbols'] + \
     CHARACTERS['hiragana'] + CHARACTERS['katakana'] + \
-    ''.join(map(unichr, KANJI))
+    ''.join(map(chr, KANJI))
 def serialread(port, count, check = False):
     logging.debug('attempting to read %d bytes from %s', count, port)
     data = port.read(count)
@@ -144,7 +144,7 @@ def snippet(data, maxlength = 32):
 def write(filename, data):
     if filename is None:
      if sys.stdin.isatty():
-      print(data.encode('hex'))
+      print((data.encode('hex')))
      else:
       sys.stdout.write(data)
     else:
@@ -185,7 +185,7 @@ def clone(action = None, filename = None, port = None):
     elif action == 'checksum':
      sys.exit(checksum(filename))
     elif action == 'rawdump':
-     print(rawdump(filename).encode('utf8'))
+     print((rawdump(filename).encode('utf8')))
     elif action == 'dump':
      dump(filename)
     elif action == 'chardump':
@@ -220,7 +220,7 @@ def dump(filename = None, port = None):
     data = rawdump(filename)
     length = len(data)
     for index in range(0, len(data), 32):
-     print('%04x: %s' % (index, data[index:index + 32].encode('utf8')))
+     print(('%04x: %s' % (index, data[index:index + 32].encode('utf8'))))
 def rawdump(filename = None, port = None):
     data = read(filename)
     translation_table = pad(CHARACTERS['vx7r'], 256, '.')
@@ -230,7 +230,7 @@ def vxwrite(filename = None, port = None, freeband = False, modded = False):
     if len(data) != DATASIZE:
      logging.error('incorrect data length: %d', len(data))
      sys.exit(1)
-    raw_input('''Instructions:
+    input('''Instructions:
      1) While holding MON-F, power on VX-7R
      2) Hit V/M key on VX-7R
      3) Within 30 seconds, hit <Enter> key on computer keyboard ''')
@@ -241,7 +241,7 @@ def vxwrite(filename = None, port = None, freeband = False, modded = False):
     serialwrite(port, data[10 + 8:], final_block = True)
     port.close()
 def vxread(filename = None, port = None):
-    raw_input('''Instructions:
+    input('''Instructions:
      1) While holding MON-F, power on VX-7R
      2) Hit <Enter> on computer keyboard
      3) Within 30 seconds, hit BAND key on VX-7R ''')
@@ -258,9 +258,9 @@ def chardump():
     for row in range(32):
      for column in range(16):
       index = (row * 16) + column
-      print(characters[index].encode('utf8'), end=' ')
+      print((characters[index].encode('utf8'),))
       if index < 0x7c:
-       print('', end=' ')
+       print(('',))
      print()
      if row == 15:
       print()
