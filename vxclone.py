@@ -11,7 +11,7 @@ modify it for other radios without having to wade through megabytes
 of source. consider this copylefted, i.e. under GNU license, with
 *no* guarantees, use at your own risk -- jc at unternet dot net
 '''
-import sys, os, serial, time, logging  # pylint: disable=multiple-imports
+import sys, os, time, logging, serial  # pylint: disable=multiple-imports
 logging.basicConfig(level=logging.DEBUG if __debug__ else logging.INFO)
 DEV = '/dev'
 PORTS = [os.path.join(DEV, port) for port in os.listdir(DEV)
