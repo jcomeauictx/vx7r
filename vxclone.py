@@ -253,16 +253,18 @@ def vxread(filename = None, port = None):
     port.close()
     write(filename, checksum(data))
 def chardump():
-    'display characters in same layout as graphic at hse.dyndns.org'
+    '''
+    display characters in same layout as graphic at hse.dyndns.org
+    '''
     characters = pad(CHARACTERS['vx7r'], 512, '.')
     for row in range(32):
-     for column in range(16):
-      index = (row * 16) + column
-      print((characters[index].encode('utf8'),))
-      if index < 0x7c:
-       print(('',))
-     print()
-     if row == 15:
-      print()
+        for column in range(16):
+            index = (row * 16) + column
+            print(characters[index].encode('utf8'), end=' ')
+            if index < 0x7c:
+                print('', end=' ')
+            print('')
+        if row == 15:
+            print('')
 if __name__ == '__main__':
     clone(*sys.argv[1:])
