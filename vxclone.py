@@ -86,10 +86,10 @@ def serialread(port, count, check = False):
     logging.debug('%d bytes of data read: %s', len(data),
                   data[:40].encode('hex'))
     if not check:
-     time.sleep(0.2)  # delay before ACK
-     port.write(ACK)
-     ack = port.read(1)
-     logging.debug('ACK expected: %s, seen: %s', repr(ACK), repr(ack))
+        time.sleep(0.2)  # delay before ACK
+        port.write(ACK)
+        ack = port.read(1)
+        logging.debug('ACK expected: %s, seen: %s', repr(ACK), repr(ack))
     return data
 def read(filename):
     if filename is None:
@@ -110,47 +110,47 @@ def serialwrite(port, data, final_block = False):
     logging.debug('attempting to write %d bytes to %s', len(data), port)
     readback, error = '', False
     for index in range(len(data)):
-     port.write(data[index])
-     if not final_block:
-      port.sendBreak(1.0)
-     if index == len(data) - 1:
-      echo = port.read(1)
-     else:
-      echo = port.read(port.inWaiting() or 1)
-     readback += echo
-     if echo != data[index]:
-      logging.debug('echoed data (%s) not same as sent (%s)', 
-       repr(echo), repr(data[index]))
-      if final_block:
-       logging.info('quitting at block offset %d', index)
-       break
-      elif data[index] == '\xff' and echo == '\xff\xff\x06':  # buggy USB adapter
-       logging.info('last character doubled, skipping to next block')
-       error = True
-       break
+        port.write(data[index])
+        if not final_block:
+            port.sendBreak(1.0)
+        if index == len(data) - 1:
+            echo = port.read(1)
+        else:
+            echo = port.read(port.inWaiting() or 1)
+        readback += echo
+        if echo != data[index]:
+            logging.debug('echoed data (%s) not same as sent (%s)', 
+                          repr(echo), repr(data[index]))
+            if final_block:
+                logging.info('quitting at block offset %d', index)
+                break
+            elif data[index] == '\xff' and echo == '\xff\xff\x06':  # buggy USB adapter
+                logging.info('last character doubled, skipping to next block')
+                error = True
+                break
     logging.debug('data written: %s', snippet(readback))
     if not final_block and not error:
-     time.sleep(0.2)  # delay before ACK
-     ack = port.read(port.inWaiting() or 1)
-     logging.debug('ACK expected: %s, seen: %s', repr(ACK), repr(ack))
-     port.write(ACK)
-     echo = port.read(port.inWaiting() or 1)
-     logging.debug('ACK read back: %s', repr(echo))
+        time.sleep(0.2)  # delay before ACK
+        ack = port.read(port.inWaiting() or 1)
+        logging.debug('ACK expected: %s, seen: %s', repr(ACK), repr(ack))
+        port.write(ACK)
+        echo = port.read(port.inWaiting() or 1)
+        logging.debug('ACK read back: %s', repr(echo))
 def snippet(data, maxlength = 32):
     snippet = data[:maxlength].encode('hex')
     if len(data) > maxlength:
-     snippet += '...'
+        snippet += '...'
     return snippet
 def write(filename, data):
     if filename is None:
-     if sys.stdin.isatty():
-      print((data.encode('hex')))
-     else:
-      sys.stdout.write(data)
+        if sys.stdin.isatty():
+            print((data.encode('hex')))
+        else:
+            sys.stdout.write(data)
     else:
-     outfile = open(filename, 'wb')
-     outfile.write(data)
-     outfile.close()
+         outfile = open(filename, 'wb')
+         outfile.write(data)
+         outfile.close()
 def checksum(data, default_offset = -127):
     failed = False
     if len(data) != DATASIZE:
