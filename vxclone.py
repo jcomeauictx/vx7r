@@ -61,21 +61,51 @@ CHARACTERS = { # two character sets, 0 and 1, total 512 characters
         '\u03bc\u03c0\u03c6\u03c9\u03a9\u2103\u2109\u00a3' \
         '\u00b1\u222b\u266a\u266b\u266d\u23b5\u300c\u300d' \
         '\u00b7\u2642\u2640\u3012',
-    'hiragana': HIRAGANA[0x2:0xb:2] + HIRAGANA[0xb:0x14:2] + \
-        HIRAGANA[0x15:0x1e:2] + HIRAGANA[0x1f:0x22:2] + HIRAGANA[0x24:29] + \
-        HIRAGANA[0x2a:0x2f:2] + HIRAGANA[0x2f:0x3c:3] + HIRAGANA[0x3f:43] + \
-        HIRAGANA[0x44:0x49:2] + HIRAGANA[0x49:0x4e] + HIRAGANA[0x4f:0x54] + \
-        HIRAGANA[0x0c:0x15:2] + HIRAGANA[0x16:0x1f:2] + HIRAGANA[0x20:0x23:2] + \
-        HIRAGANA[0x25:0x2a:2] + '\u3002\u3001' + \
-        HIRAGANA[0x30:0x3d:3] + HIRAGANA[0x31:0x3e:3] + \
-        HIRAGANA[0x1:0xa:2] + HIRAGANA[0x43:0x48:2] + HIRAGANA[0x23],
-    'katakana': KATAKANA[0x2:0xb:2] + KATAKANA[0xb:0x14:2] + \
-        KATAKANA[0x15:0x1e:2] + KATAKANA[0x1f:0x22:2] + KATAKANA[0x24:29] + \
-        KATAKANA[0x2a:0x2f:2] + KATAKANA[0x2f:0x3c:3] + KATAKANA[0x3f:43] + \
-        KATAKANA[0x44:0x49:2] + KATAKANA[0x49:0x4e] + KATAKANA[0x4f:0x54] + \
-        KATAKANA[0x0c:0x15:2] + KATAKANA[0x16:0x1f:2] + KATAKANA[0x20:0x23:2] + \
-        KATAKANA[0x25:0x2a:2] + KATAKANA[0x30:0x3d:3] + KATAKANA[0x31:0x3e:3] + \
-        KATAKANA[0x1:0xa:2] + KATAKANA[0x43:0x48:2] + KATAKANA[0x23],
+    'hiragana': (
+        HIRAGANA[0x2:0xb:2] +
+        HIRAGANA[0xb:0x14:2] +
+        HIRAGANA[0x15:0x1e:2] +
+        HIRAGANA[0x1f:0x22:2] +
+        HIRAGANA[0x24:0x29] +
+        HIRAGANA[0x2a:0x2f:2] +
+        HIRAGANA[0x2f:0x3c:3] +
+        HIRAGANA[0x3f:0x43] +
+        HIRAGANA[0x44:0x49:2] +
+        HIRAGANA[0x49:0x4e] +
+        HIRAGANA[0x4f:0x54] +
+        HIRAGANA[0x0c:0x15:2] +
+        HIRAGANA[0x16:0x1f:2] +
+        HIRAGANA[0x20:0x23:2] +
+        HIRAGANA[0x25:0x2a:2] +
+        '\u3002\u3001' +  # CJK full stop and comma
+        HIRAGANA[0x30:0x3d:3] +
+        HIRAGANA[0x31:0x3e:3] +
+        HIRAGANA[0x1:0xa:2] +
+        HIRAGANA[0x43:0x48:2] +
+        HIRAGANA[0x23]
+    ),
+    'katakana': (
+        KATAKANA[0x2:0xb:2] +
+        KATAKANA[0xb:0x14:2] +
+        KATAKANA[0x15:0x1e:2] +
+        KATAKANA[0x1f:0x22:2] +
+        KATAKANA[0x24:0x29] +
+        KATAKANA[0x2a:0x2f:2] +
+        KATAKANA[0x2f:0x3c:3] +
+        KATAKANA[0x3f:0x43] +
+        KATAKANA[0x44:0x49:2] +
+        KATAKANA[0x49:0x4e] +
+        KATAKANA[0x4f:0x54] +
+        KATAKANA[0x0c:0x15:2] +
+        KATAKANA[0x16:0x1f:2] +
+        KATAKANA[0x20:0x23:2] +
+        KATAKANA[0x25:0x2a:2] +
+        KATAKANA[0x30:0x3d:3] +
+        KATAKANA[0x31:0x3e:3] +
+        KATAKANA[0x1:0xa:2] +
+        KATAKANA[0x43:0x48:2] +
+        KATAKANA[0x23]
+    ),
 }
 CHARACTERS['vx7r'] = CHARACTERS['digits'] + ' ' + CHARACTERS['alphabetic'] + \
     CHARACTERS['alphabetic'].lower() + CHARACTERS['symbols'] + \
@@ -275,6 +305,8 @@ def chardump():
                 row[index] = '\u3000'
             elif ord(character) < 0x7f:
                 row[index] = chr(ord(character) + fullwidth)
+            elif character == '\u221a':  # square root radical
+                row[index] = character + ' ' + '\u0305'  # add overline
             elif ord(character) < 0x3000:
                 row[index] = ' ' + character  # pad with a space
         return row
