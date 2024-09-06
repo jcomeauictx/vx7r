@@ -56,7 +56,7 @@ CHARACTERS = { # two character sets, 0 and 1, total 512 characters
 # from http://hse.dyndns.org/hiroto/RFY_LAB/vx7/e/vx7_8510.htm
     'digits': '0123456789',
     'alphabetic': 'ABCDEFGHIJKLMNOPQRSTUVWXYZ',
-    'symbols': '.,:;!"#$%&\x27()*+-\u22c5=<>?@[\u00a5]^_\\{|}\u2192\u2190' \
+    'symbols': '.,:;!"#$%&\x27()*+-\u22c5=<>?@[\uffe5]^_\\{|}\u2192\u2190' \
         '\u25b2\u25bc~\u203c\u00f7\u00d7\u221a\u03bb' \
         '\u03bc\u03c0\u03c6\u03c9\u03a9\u2103\u2109\u00a3' \
         '\u00b1\u222b\u266a\u266b\u266d\u23b5\u23be\u23cc' \
