@@ -273,7 +273,7 @@ def chardump():
         for index, character in enumerate(row):
             if character == ' ':
                 row[index] = '\u3000'
-            elif ord(character) < 0x7e:
+            elif ord(character) < 0x7f:
                 row[index] = chr(ord(character) + fullwidth)
             elif ord(character) < 0x3000:
                 row[index] = ' ' + character  # pad with a space
