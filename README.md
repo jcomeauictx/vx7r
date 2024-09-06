@@ -12,6 +12,5 @@ After the final block, send nothing but check checksum.
 After writing old.vxr, hitting V/M key shows D.014 at top.
 Find out what this encodes into.
 
-Running `./vxclone.py chardump` should print out something resembling
-[this image from http://hse.dyndns.org/hiroto/RFY_LAB/vx7/e/vx7_8510.htm]
-(images/vx7_8501.gif)
+Running `./vxclone.py chardump` should print out something resembling this:
+![image from http://hse.dyndns.org/hiroto/RFY_LAB/vx7/e/vx7_8510.htm](images/vx7_8501.gif)
