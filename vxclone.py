@@ -231,9 +231,9 @@ def vxwrite(filename = None, port = None, freeband = False, modded = False):
      logging.error('incorrect data length: %d', len(data))
      sys.exit(1)
     input('''Instructions:
-     1) While holding MON-F, power on VX-7R
-     2) Hit V/M key on VX-7R
-     3) Within 30 seconds, hit <Enter> key on computer keyboard ''')
+        1) While holding MON-F, power on VX-7R
+        2) Hit V/M key on VX-7R
+        3) Within 30 seconds, hit <Enter> key on computer keyboard ''')
     port.flushInput()
     port.flushOutput()
     serialwrite(port, data[:10])
@@ -242,9 +242,9 @@ def vxwrite(filename = None, port = None, freeband = False, modded = False):
     port.close()
 def vxread(filename = None, port = None):
     input('''Instructions:
-     1) While holding MON-F, power on VX-7R
-     2) Hit <Enter> on computer keyboard
-     3) Within 30 seconds, hit BAND key on VX-7R ''')
+        1) While holding MON-F, power on VX-7R
+        2) Hit <Enter> on computer keyboard
+        3) Within 30 seconds, hit BAND key on VX-7R ''')
     port.flushInput()
     port.flushOutput()
     data = serialread(port, 10)
@@ -256,15 +256,15 @@ def chardump():
     '''
     display characters in same layout as graphic at hse.dyndns.org
     '''
-    characters = pad(CHARACTERS['vx7r'], 512, '.')
-    for row in range(32):
-        for column in range(16):
-            index = (row * 16) + column
-            print(characters[index].encode('utf8'), end=' ')
-            if index < 0x7c:
-                print('', end=' ')
-            print('')
-        if row == 15:
-            print('')
+    columnheaders = '     +0 +1 +2 +3 +4 +5 +6 +7 +8 +9 +A +B +C +D +E +F'
+    rowheaders = [' %02X : ' % n for n in range(0, 0x100, 0x10)]
+    for character_set in (0, 1):
+        print('character set %s' % character_set)
+        print('')
+        offset = character_set * 256
+        characters = CHARACTERS['vx7r'][offset:offset + 256].ljust(256, '.')
+        for row_number in range(16):
+            row = characters[row_number * 16:(row_number * 16) + 16]
+            print(rowheaders[row_number] + ' '.join(row))
 if __name__ == '__main__':
     clone(*sys.argv[1:])
