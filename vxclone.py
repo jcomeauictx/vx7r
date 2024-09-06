@@ -95,7 +95,8 @@ CHARACTERS = { # two character sets, 0 and 1, total 512 characters
         KATAKANA[0x3f:0x43] +
         KATAKANA[0x44:0x49:2] +
         KATAKANA[0x49:0x4e] +
-        KATAKANA[0x4f:0x54] +
+        KATAKANA[0x4f] +
+        KATAKANA[0x52:0x54] +  # drop obsolete wi and we
         KATAKANA[0x0c:0x15:2] +
         KATAKANA[0x16:0x1f:2] +
         KATAKANA[0x20:0x23:2] +
