@@ -59,8 +59,8 @@ CHARACTERS = { # two character sets, 0 and 1, total 512 characters
     'symbols': '.,:;!"#$%&\x27()*+-\u22c5=<>?@[\uffe5]^_\\{|}\u2192\u2190' \
         '\u25b2\u25bc~\u203c\u00f7\u00d7\u221a\u03bb' \
         '\u03bc\u03c0\u03c6\u03c9\u03a9\u2103\u2109\u00a3' \
-        '\u00b1\u222b\u266a\u266b\u266d\u23b5\u23be\u23cc' \
-        '\u00b7\u2642\u2640\u2564',
+        '\u00b1\u222b\u266a\u266b\u266d\u23b5\u300c\u300d' \
+        '\u00b7\u2642\u2640\u3012',
     'hiragana': HIRAGANA[0x2:0xb:2] + HIRAGANA[0xb:0x14:2] + \
         HIRAGANA[0x15:0x1e:2] + HIRAGANA[0x1f:0x22:2] + HIRAGANA[0x24:29] + \
         HIRAGANA[0x2a:0x2f:2] + HIRAGANA[0x2f:0x3c:3] + HIRAGANA[0x3f:43] + \
@@ -273,8 +273,10 @@ def chardump():
         for index, character in enumerate(row):
             if character == ' ':
                 row[index] = '\u3000'
-            elif ord(row[index]) < 0x7e:
+            elif ord(character) < 0x7e:
                 row[index] = chr(ord(character) + fullwidth)
+            elif ord(character) < 0x3000:
+                row[index] = ' ' + character  # pad with a space
         return row
     columnheaders = '      +0 +1 +2 +3 +4 +5 +6 +7 +8 +9 +A +B +C +D +E +F'
     rowheaders = [' %02X : ' % n for n in range(0, 0x100, 0x10)]
