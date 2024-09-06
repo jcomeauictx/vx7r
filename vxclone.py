@@ -255,16 +255,38 @@ def vxread(filename = None, port = None):
 def chardump():
     '''
     display characters in same layout as graphic at hse.dyndns.org
+
+    ASCII characters will be converted herein to fullwidth characters:
+
+    "Range U+FF01–FF5E reproduces the characters of ASCII 21 to 7E as
+     fullwidth forms. U+FF00 does not correspond to a fullwidth ASCII 20
+     (space character), since that role is already fulfilled by
+     U+3000 'ideographic space'.", from
+    https://en.wikipedia.org/wiki/Halfwidth_and_Fullwidth_Forms_(Unicode_block)
     '''
-    columnheaders = '     +0 +1 +2 +3 +4 +5 +6 +7 +8 +9 +A +B +C +D +E +F'
+    def transform(row):
+        '''
+        inner function to change row of characters to match as close as
+        possible the form in Heian's chart
+        '''
+        fullwidth = 0xff01 - 0x21
+        for index in range(len(row)):
+            if row[index] == ' ':
+                row[index] = '\u3000'
+            elif ord(row[index]) < 0x7e:
+                row[index] = chr(ord(row[index]) + fullwidth)
+        return row
+    columnheaders = '      +0 +1 +2 +3 +4 +5 +6 +7 +8 +9 +A +B +C +D +E +F'
     rowheaders = [' %02X : ' % n for n in range(0, 0x100, 0x10)]
     for character_set in (0, 1):
         print('character set %s' % character_set)
-        print('')
+        print()
+        print(columnheaders)
         offset = character_set * 256
         characters = CHARACTERS['vx7r'][offset:offset + 256].ljust(256, '.')
         for row_number in range(16):
-            row = characters[row_number * 16:(row_number * 16) + 16]
-            print(rowheaders[row_number] + ' '.join(row))
+            row = list(characters[row_number * 16:(row_number * 16) + 16])
+            print(rowheaders[row_number] + ' '.join(transform(row)))
+        print()
 if __name__ == '__main__':
     clone(*sys.argv[1:])
