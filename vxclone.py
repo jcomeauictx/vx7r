@@ -241,12 +241,6 @@ def freeband_mod(data, modded):
                       moddedbyte, hardware_setting)
         moddedbyte = hardware_setting
     return data[:6] + chr(moddedbyte) + data[7:10] + chr(modbyte) + data[11:]
-def pad(data, length, pad_character = '.'):
-    padlength = length - len(data)
-    if padlength < 1:
-        return data[:length]
-    padding = pad_character * padlength
-    return data + padding
 def dump(filename = None, port = None):
     data = rawdump(filename)
     length = len(data)
@@ -299,10 +293,17 @@ def chardump():
         '''
         inner function to change row of characters to match as close as
         possible the form in Heian's chart
+
+        the "C1", "C2", ... placeholders for programmable Kanji will show
+        correctly for the expected 5 slots, and should work for up to 9.
         '''
         fullwidth = 0xff01 - 0x21
+        placeholder = 0
         for index, character in enumerate(row):
-            if character == ' ':
+            if character == '\0':
+                row[index] = 'C%d' % (placeholder + 1)
+                placeholder += 1
+            elif character == ' ':
                 row[index] = '\u3000'
             elif ord(character) < 0x7f:
                 row[index] = chr(ord(character) + fullwidth)
@@ -318,7 +319,7 @@ def chardump():
         print()
         print(columnheaders)
         offset = character_set * 256
-        characters = CHARACTERS['vx7r'][offset:offset + 256].ljust(256, '.')
+        characters = CHARACTERS['vx7r'][offset:offset + 256].ljust(256, '\0')
         for row_number in range(16):
             row = list(characters[row_number * 16:(row_number * 16) + 16])
             print(rowheaders[row_number] + ' '.join(transform(row)))
