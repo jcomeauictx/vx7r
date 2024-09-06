@@ -11,11 +11,12 @@ modify it for other radios without having to wade through megabytes
 of source. consider this copylefted, i.e. under GNU license, with
 *no* guarantees, use at your own risk -- jc at unternet dot net
 '''
+# pylint: disable=consider-using-f-string
 import sys, os, time, logging, serial  # pylint: disable=multiple-imports
 logging.basicConfig(level=logging.DEBUG if __debug__ else logging.INFO)
 DEV = '/dev'
 PORTS = [os.path.join(DEV, port) for port in os.listdir(DEV)
-    if port.startswith('ttyUSB')]
+         if port.startswith('ttyUSB')]
 ACK = chr(6)
 DATASIZE = 16211
 CHECKBYTES = [0x611, 0x691, 0x3f52]
@@ -56,25 +57,25 @@ CHARACTERS = { # two character sets, 0 and 1, total 512 characters
     'digits': '0123456789',
     'alphabetic': 'ABCDEFGHIJKLMNOPQRSTUVWXYZ',
     'symbols': '.,:;!"#$%&\x27()*+-\u22c5=<>?@[\u00a5]^_\\{|}\u2192\u2190' \
-      '\u25b2\u25bc~\u203c\u00f7\u00d7\u221a\u03bb' \
-      '\u03bc\u03c0\u03c6\u03c9\u03a9\u2103\u2109\u00a3' \
-      '\u00b1\u222b\u266a\u266b\u266d\u23b5\u23be\u23cc' \
-      '\u00b7\u2642\u2640\u2564',
+        '\u25b2\u25bc~\u203c\u00f7\u00d7\u221a\u03bb' \
+        '\u03bc\u03c0\u03c6\u03c9\u03a9\u2103\u2109\u00a3' \
+        '\u00b1\u222b\u266a\u266b\u266d\u23b5\u23be\u23cc' \
+        '\u00b7\u2642\u2640\u2564',
     'hiragana': HIRAGANA[0x2:0xb:2] + HIRAGANA[0xb:0x14:2] + \
-      HIRAGANA[0x15:0x1e:2] + HIRAGANA[0x1f:0x22:2] + HIRAGANA[0x24:29] + \
-      HIRAGANA[0x2a:0x2f:2] + HIRAGANA[0x2f:0x3c:3] + HIRAGANA[0x3f:43] + \
-      HIRAGANA[0x44:0x49:2] + HIRAGANA[0x49:0x4e] + HIRAGANA[0x4f:0x54] + \
-      HIRAGANA[0x0c:0x15:2] + HIRAGANA[0x16:0x1f:2] + HIRAGANA[0x20:0x23:2] + \
-      HIRAGANA[0x25:0x2a:2] + '\u3002\u3001' + \
-      HIRAGANA[0x30:0x3d:3] + HIRAGANA[0x31:0x3e:3] + \
-      HIRAGANA[0x1:0xa:2] + HIRAGANA[0x43:0x48:2] + HIRAGANA[0x23],
+        HIRAGANA[0x15:0x1e:2] + HIRAGANA[0x1f:0x22:2] + HIRAGANA[0x24:29] + \
+        HIRAGANA[0x2a:0x2f:2] + HIRAGANA[0x2f:0x3c:3] + HIRAGANA[0x3f:43] + \
+        HIRAGANA[0x44:0x49:2] + HIRAGANA[0x49:0x4e] + HIRAGANA[0x4f:0x54] + \
+        HIRAGANA[0x0c:0x15:2] + HIRAGANA[0x16:0x1f:2] + HIRAGANA[0x20:0x23:2] + \
+        HIRAGANA[0x25:0x2a:2] + '\u3002\u3001' + \
+        HIRAGANA[0x30:0x3d:3] + HIRAGANA[0x31:0x3e:3] + \
+        HIRAGANA[0x1:0xa:2] + HIRAGANA[0x43:0x48:2] + HIRAGANA[0x23],
     'katakana': KATAKANA[0x2:0xb:2] + KATAKANA[0xb:0x14:2] + \
-      KATAKANA[0x15:0x1e:2] + KATAKANA[0x1f:0x22:2] + KATAKANA[0x24:29] + \
-      KATAKANA[0x2a:0x2f:2] + KATAKANA[0x2f:0x3c:3] + KATAKANA[0x3f:43] + \
-      KATAKANA[0x44:0x49:2] + KATAKANA[0x49:0x4e] + KATAKANA[0x4f:0x54] + \
-      KATAKANA[0x0c:0x15:2] + KATAKANA[0x16:0x1f:2] + KATAKANA[0x20:0x23:2] + \
-      KATAKANA[0x25:0x2a:2] + KATAKANA[0x30:0x3d:3] + KATAKANA[0x31:0x3e:3] + \
-      KATAKANA[0x1:0xa:2] + KATAKANA[0x43:0x48:2] + KATAKANA[0x23],
+        KATAKANA[0x15:0x1e:2] + KATAKANA[0x1f:0x22:2] + KATAKANA[0x24:29] + \
+        KATAKANA[0x2a:0x2f:2] + KATAKANA[0x2f:0x3c:3] + KATAKANA[0x3f:43] + \
+        KATAKANA[0x44:0x49:2] + KATAKANA[0x49:0x4e] + KATAKANA[0x4f:0x54] + \
+        KATAKANA[0x0c:0x15:2] + KATAKANA[0x16:0x1f:2] + KATAKANA[0x20:0x23:2] + \
+        KATAKANA[0x25:0x2a:2] + KATAKANA[0x30:0x3d:3] + KATAKANA[0x31:0x3e:3] + \
+        KATAKANA[0x1:0xa:2] + KATAKANA[0x43:0x48:2] + KATAKANA[0x23],
 }
 CHARACTERS['vx7r'] = CHARACTERS['digits'] + ' ' + CHARACTERS['alphabetic'] + \
     CHARACTERS['alphabetic'].lower() + CHARACTERS['symbols'] + \
@@ -93,9 +94,9 @@ def serialread(port, count, check = False):
     return data
 def read(filename):
     if filename is None:
-     infile = sys.stdin
+        infile = sys.stdin
     else:
-     infile = open(filename)
+        infile = open(filename)
     data = infile.read()
     infile.close()
     return data
@@ -119,7 +120,7 @@ def serialwrite(port, data, final_block = False):
             echo = port.read(port.inWaiting() or 1)
         readback += echo
         if echo != data[index]:
-            logging.debug('echoed data (%s) not same as sent (%s)', 
+            logging.debug('echoed data (%s) not same as sent (%s)',
                           repr(echo), repr(data[index]))
             if final_block:
                 logging.info('quitting at block offset %d', index)
@@ -148,79 +149,78 @@ def write(filename, data):
         else:
             sys.stdout.write(data)
     else:
-         outfile = open(filename, 'wb')
-         outfile.write(data)
-         outfile.close()
+        outfile = open(filename, 'wb')
+        outfile.write(data)
+        outfile.close()
 def checksum(data, default_offset = -127):
     failed = False
     if len(data) != DATASIZE:
-     filename = data
-     data = read(filename)  # assume it's a file and not raw data
+        filename = data
+        data = read(filename)  # assume it's a file and not raw data
     else:
-     filename = None
+        filename = None
     for index in range(len(CHECKBYTES)):
-     checkbyte = CHECKBYTES[index]
-     # final checkbyte is sum of *all* bytes
-     offset = 0 if index == len(CHECKBYTES) - 1 else checkbyte + default_offset
-     check = sum(map(ord, data[offset:checkbyte])) & 0xff
-     checksum = ord(data[checkbyte])
-     logging.debug('checksum [0x%x:0x%x] calculated: 0x%x, found: 0x%x',
-      offset, checkbyte - 1, check, checksum)
-     if checksum != check:
-      failed = True
-      if not filename:
-       logging.debug('correcting checksum %d to 0x%x', index, check)
-       data = data[:checkbyte] + chr(check) + data[checkbyte + 1:]
+        checkbyte = CHECKBYTES[index]
+        # final checkbyte is sum of *all* bytes
+        offset = 0 if index == len(CHECKBYTES) - 1 else checkbyte + default_offset
+        check = sum(map(ord, data[offset:checkbyte])) & 0xff
+        checksum = ord(data[checkbyte])
+        logging.debug('checksum [0x%x:0x%x] calculated: 0x%x, found: 0x%x',
+                      offset, checkbyte - 1, check, checksum)
+        if checksum != check:
+            failed = True
+            if not filename:
+                logging.debug('correcting checksum %d to 0x%x', index, check)
+                data = data[:checkbyte] + chr(check) + data[checkbyte + 1:]
     return failed if filename else data
 def clone(action = None, filename = None, port = None):
     if action in ['read', 'write', 'modwrite']:
-     port = serial.Serial(port or PORTS[0], baudrate = 19200,
-      stopbits = 2, timeout = 30)
+        port = serial.Serial(port or PORTS[0], baudrate = 19200,
+                             stopbits = 2, timeout = 30)
     if action == 'read':
-     vxread(filename, port)
+        vxread(filename, port)
     elif action == 'write':
-     vxwrite(filename, port)
+        vxwrite(filename, port)
     elif action == 'modwrite':
-     vxwrite(filename, port, freeband = True)
+        vxwrite(filename, port, freeband = True)
     elif action == 'checksum':
-     sys.exit(checksum(filename))
+        sys.exit(checksum(filename))
     elif action == 'rawdump':
-     print((rawdump(filename).encode('utf8')))
+        print((rawdump(filename).encode('utf8')))
     elif action == 'dump':
-     dump(filename)
+        dump(filename)
     elif action == 'chardump':
-     chardump()
+        chardump()
     else:
-     logging.error('must specify "read" or "write"')
-     sys.exit(1)
+        logging.error('must specify "read" or "write"')
+        sys.exit(1)
 def freeband_mod(data, modded):
     modbyte = ord(data[10])
     moddedbyte = ord(data[6])
     hardware_setting = 0xe8 if modded else [moddedbyte, 0xe0][moddedbyte == 0xe8]
     if modbyte == 0xe8:
-     logging.debug('image already has mod enabled')
+        logging.debug('image already has mod enabled')
     else:
-     logging.debug('enabling mod %02x from %02x', 0xe8, modbyte)
-     modbyte = 0xe8
+        logging.debug('enabling mod %02x from %02x', 0xe8, modbyte)
+        modbyte = 0xe8
     if moddedbyte == hardware_setting:
-     logging.debug('image hardware byte is already correct')
+        logging.debug('image hardware byte is already correct')
     else:
-     logging.debug('changing modded byte %02x to %02x',
-      moddedbyte, hardware_setting)
-     moddedbyte = hardware_setting
+        logging.debug('changing modded byte %02x to %02x',
+                      moddedbyte, hardware_setting)
+        moddedbyte = hardware_setting
     return data[:6] + chr(moddedbyte) + data[7:10] + chr(modbyte) + data[11:]
 def pad(data, length, pad_character = '.'):
     padlength = length - len(data)
     if padlength < 1:
-     return data[:length]
-    else:
-     padding = pad_character * padlength
-     return data + padding
+        return data[:length]
+    padding = pad_character * padlength
+    return data + padding
 def dump(filename = None, port = None):
     data = rawdump(filename)
     length = len(data)
     for index in range(0, len(data), 32):
-     print(('%04x: %s' % (index, data[index:index + 32].encode('utf8'))))
+        print(('%04x: %s' % (index, data[index:index + 32].encode('utf8'))))
 def rawdump(filename = None, port = None):
     data = read(filename)
     translation_table = pad(CHARACTERS['vx7r'], 256, '.')
@@ -228,8 +228,8 @@ def rawdump(filename = None, port = None):
 def vxwrite(filename = None, port = None, freeband = False, modded = False):
     data = checksum(freeband_mod(read(filename), modded))
     if len(data) != DATASIZE:
-     logging.error('incorrect data length: %d', len(data))
-     sys.exit(1)
+        logging.error('incorrect data length: %d', len(data))
+        sys.exit(1)
     input('''Instructions:
         1) While holding MON-F, power on VX-7R
         2) Hit V/M key on VX-7R
@@ -270,11 +270,11 @@ def chardump():
         possible the form in Heian's chart
         '''
         fullwidth = 0xff01 - 0x21
-        for index in range(len(row)):
-            if row[index] == ' ':
+        for index, character in enumerate(row):
+            if character == ' ':
                 row[index] = '\u3000'
             elif ord(row[index]) < 0x7e:
-                row[index] = chr(ord(row[index]) + fullwidth)
+                row[index] = chr(ord(character) + fullwidth)
         return row
     columnheaders = '      +0 +1 +2 +3 +4 +5 +6 +7 +8 +9 +A +B +C +D +E +F'
     rowheaders = [' %02X : ' % n for n in range(0, 0x100, 0x10)]
