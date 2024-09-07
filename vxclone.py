@@ -118,7 +118,7 @@ CHARACTERS['vx7r'] = CHARACTERS['digits'] + ' ' + CHARACTERS['alphabetic'] + \
     CHARACTERS['alphabetic'].lower() + CHARACTERS['symbols'] + \
     CHARACTERS['hiragana'] + CHARACTERS['katakana'] + \
     ''.join(map(chr, KANJI))
-def serialread(port, count, check = False):
+def serialread(port, count, check=False):
     '''
     read data over serial connection
     '''
@@ -181,7 +181,7 @@ def serialwrite(port, data, final_block=False):
         port.write(ACK)
         echo = port.read(port.inWaiting() or 1)
         logging.debug('ACK read back: %s', repr(echo))
-def snippet(data, maxlength = 32):
+def snippet(data, maxlength=32):
     '''
     generate snippet of data for debugging
     '''
@@ -203,7 +203,7 @@ def write(filename, data):
         outfile = open(filename, 'wb')
         outfile.write(data)
         outfile.close()
-def checksum(data, default_offset = -127):
+def checksum(data, default_offset=-127):
     '''
     verify data checksum
     '''
@@ -226,21 +226,21 @@ def checksum(data, default_offset = -127):
                 logging.debug('correcting checksum %d to 0x%x', index, check)
                 data = data[:checkbyte] + chr(check) + data[checkbyte + 1:]
     return failed if filename else data
-def clone(action = None, filename = None, port = None):
+def clone(action=None, filename=None, port=None):
     '''
     clone radio data in two steps: read, followed by write or modwrite
 
     other options also, primarily for debugging
     '''
     if action in ['read', 'write', 'modwrite']:
-        port = serial.Serial(port or PORTS[0], baudrate = 19200,
-                             stopbits = 2, timeout = 30)
+        port = serial.Serial(port or PORTS[0], baudrate=19200,
+                             stopbits=2, timeout=30)
     if action == 'read':
         vxread(filename, port)
     elif action == 'write':
         vxwrite(filename, port)
     elif action == 'modwrite':
-        vxwrite(filename, port, freeband = True)
+        vxwrite(filename, port, freeband=True)
     elif action == 'checksum':
         sys.exit(checksum(filename))
     elif action == 'rawdump':
@@ -275,26 +275,29 @@ def freeband_mod(data, modded):
                       moddedbyte, hardware_setting)
         moddedbyte = hardware_setting
     return data[:6] + chr(moddedbyte) + data[7:10] + chr(modbyte) + data[11:]
-def dump(filename = None, port = None):
+def dump(filename=None):
     '''
     dump out a clone file to stdout, in chunks of 32 characters
     '''
-    data = rawdump(filename, port)
+    data = rawdump(filename)
     length = len(data)
     for index in range(0, length, 32):
         print(('%04x: %s' % (index, data[index:index + 32].encode('utf8'))))
-def rawdump(filename = None, port = None):
+def rawdump(filename=None):
     '''
     direct translation of clone file to character set 0
     '''
     data = read(filename)
     translation_table = CHARACTERS['vx7r'][:256]
     return ''.join([translation_table[ord(l)] for l in data])
-def vxwrite(filename = None, port = None, freeband = False, modded = False):
+def vxwrite(filename=None, port=None, freeband=False, modded=False):
     '''
     write out clone file to radio
     '''
-    data = checksum(freeband_mod(read(filename), modded))
+    if freeband:
+        data = checksum(freeband_mod(read(filename), modded))
+    else:
+        data = checksum(read(filename))
     if len(data) != DATASIZE:
         logging.error('incorrect data length: %d', len(data))
         sys.exit(1)
@@ -306,7 +309,7 @@ def vxwrite(filename = None, port = None, freeband = False, modded = False):
     port.flushOutput()
     serialwrite(port, data[:10])
     serialwrite(port, data[10:10 + 8])
-    serialwrite(port, data[10 + 8:], final_block = True)
+    serialwrite(port, data[10 + 8:], final_block=True)
     port.close()
 def vxread(filename=None, port=None):
     '''
@@ -320,7 +323,7 @@ def vxread(filename=None, port=None):
     port.flushOutput()
     data = serialread(port, 10)
     data += serialread(port, 8)
-    data += serialread(port, DATASIZE - 10 - 8, check = True)
+    data += serialread(port, DATASIZE - 10 - 8, check=True)
     port.close()
     write(filename, checksum(data))
 def chardump():
