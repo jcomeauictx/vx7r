@@ -144,7 +144,7 @@ def read(filename):
     data = infile.read()
     infile.close()
     return data
-def serialwrite(port, data, final_block = False):
+def serialwrite(port, data, final_block=False):
     '''
     note that the VX-7R echoes back data whether you like it or not
 
@@ -154,8 +154,8 @@ def serialwrite(port, data, final_block = False):
     '''
     logging.debug('attempting to write %d bytes to %s', len(data), port)
     readback, error = '', False
-    for index in range(len(data)):
-        port.write(data[index])
+    for index, byte in enumerate(data):
+        port.write(byte)
         if not final_block:
             port.sendBreak(1.0)
         if index == len(data) - 1:
@@ -165,11 +165,11 @@ def serialwrite(port, data, final_block = False):
         readback += echo
         if echo != data[index]:
             logging.debug('echoed data (%s) not same as sent (%s)',
-                          repr(echo), repr(data[index]))
+                          repr(echo), repr(byte))
             if final_block:
                 logging.info('quitting at block offset %d', index)
                 break
-            if data[index] == '\xff' and echo == '\xff\xff\x06':  # buggy USB adapter
+            if byte == b'\xff' and echo == b'\xff\xff\x06':  # buggy USB adapter
                 logging.info('last character doubled, skipping to next block')
                 error = True
                 break
