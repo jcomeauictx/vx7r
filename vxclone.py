@@ -185,14 +185,15 @@ def snippet(data, maxlength = 32):
     '''
     generate snippet of data for debugging
     '''
-    snippet = data[:maxlength].encode('hex')
+    snipped = data[:maxlength].encode('hex')
     if len(data) > maxlength:
-        snippet += '...'
-    return snippet
+        snipped += '...'
+    return snipped
 def write(filename, data):
     '''
     write out data to file or stdout
     '''
+    # pylint: disable=consider-using-with
     if filename is None:
         if sys.stdin.isatty():
             print((data.encode('hex')))
@@ -216,10 +217,10 @@ def checksum(data, default_offset = -127):
         # final checkbyte is sum of *all* bytes
         offset = 0 if index == len(CHECKBYTES) - 1 else checkbyte + default_offset
         check = sum(map(ord, data[offset:checkbyte])) & 0xff
-        checksum = ord(data[checkbyte])
+        check_sum = ord(data[checkbyte])
         logging.debug('checksum [0x%x:0x%x] calculated: 0x%x, found: 0x%x',
-                      offset, checkbyte - 1, check, checksum)
-        if checksum != check:
+                      offset, checkbyte - 1, check, check_sum)
+        if check_sum != check:
             failed = True
             if not filename:
                 logging.debug('correcting checksum %d to 0x%x', index, check)
@@ -278,9 +279,9 @@ def dump(filename = None, port = None):
     '''
     dump out a clone file to stdout, in chunks of 32 characters
     '''
-    data = rawdump(filename)
+    data = rawdump(filename, port)
     length = len(data)
-    for index in range(0, len(data), 32):
+    for index in range(0, length, 32):
         print(('%04x: %s' % (index, data[index:index + 32].encode('utf8'))))
 def rawdump(filename = None, port = None):
     '''
