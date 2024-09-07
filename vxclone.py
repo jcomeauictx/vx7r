@@ -23,6 +23,8 @@ CHECKBYTES = [0x611, 0x691, 0x3f52]
 HIRAGANA = ''.join([chr(n) for n in range(0x3040, 0x30a0)])
 KATAKANA = ''.join([chr(n) for n in range(0x30a0, 0x3100)])
 KANJI = [  # box, 0x56d7, used as placeholder for unidentified Kanji
+    # (lookup C1 character images by radical at
+    #  https://www.chinese-tools.com/tools/sinograms.html?r)
     # love, voltage, Italy,  place,  town,   raise,  one,    briar,
     0x611b, 0x5727, 0x4f0a, 0x4f4d, 0x4e95, 0x80b2, 0x4e00, 0x8328,
     # England, defense,
