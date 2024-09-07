@@ -25,9 +25,11 @@ KATAKANA = ''.join([chr(n) for n in range(0x30a0, 0x3100)])
 KANJI = [  # box, 0x56d7, used as placeholder for unidentified Kanji
     # (lookup C1 character images by radical at
     #  https://www.chinese-tools.com/tools/sinograms.html?r)
+    # (map hex to character and definition at
+    #  https://unicode-explorer.com/c/611b)
     # love, voltage, Italy,  place,  town,   raise,  one,    briar,
     0x611b, 0x5727, 0x4f0a, 0x4f4d, 0x4e95, 0x80b2, 0x4e00, 0x8328,
-    # England, defense,
+    # England, defense, exceed, yen, far,   across, ridge,  pour,
     0x82f1, 0x885b, 0x8d8a, 0x5186, 0x9060, 0x6a2a, 0x5ca1, 0x6c96,
     0x5c4b, 0x6e29, 0x97f3, 0x5316, 0x6b4c, 0x6cb3, 0x706b, 0x9999,
     0x9e7f, 0x8cc0, 0x6d77, 0x676e, 0x9694, 0x5b66, 0x6f5f, 0x9593,
@@ -134,10 +136,11 @@ def read(filename):
     '''
     read data from file or stdin
     '''
+    # pylint: disable=consider-using-with
     if filename is None:
         infile = sys.stdin
     else:
-        infile = open(filename)
+        infile = open(filename, encoding='utf-8')
     data = infile.read()
     infile.close()
     return data
@@ -166,7 +169,7 @@ def serialwrite(port, data, final_block = False):
             if final_block:
                 logging.info('quitting at block offset %d', index)
                 break
-            elif data[index] == '\xff' and echo == '\xff\xff\x06':  # buggy USB adapter
+            if data[index] == '\xff' and echo == '\xff\xff\x06':  # buggy USB adapter
                 logging.info('last character doubled, skipping to next block')
                 error = True
                 break
