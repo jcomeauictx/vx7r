@@ -115,6 +115,9 @@ CHARACTERS['vx7r'] = CHARACTERS['digits'] + ' ' + CHARACTERS['alphabetic'] + \
     CHARACTERS['hiragana'] + CHARACTERS['katakana'] + \
     ''.join(map(chr, KANJI))
 def serialread(port, count, check = False):
+    '''
+    read data over serial connection
+    '''
     logging.debug('attempting to read %d bytes from %s', count, port)
     data = port.read(count)
     logging.debug('%d bytes of data read: %s', len(data),
@@ -126,6 +129,9 @@ def serialread(port, count, check = False):
         logging.debug('ACK expected: %s, seen: %s', repr(ACK), repr(ack))
     return data
 def read(filename):
+    '''
+    read data from file or stdin
+    '''
     if filename is None:
         infile = sys.stdin
     else:
@@ -171,11 +177,17 @@ def serialwrite(port, data, final_block = False):
         echo = port.read(port.inWaiting() or 1)
         logging.debug('ACK read back: %s', repr(echo))
 def snippet(data, maxlength = 32):
+    '''
+    generate snippet of data for debugging
+    '''
     snippet = data[:maxlength].encode('hex')
     if len(data) > maxlength:
         snippet += '...'
     return snippet
 def write(filename, data):
+    '''
+    write out data to file or stdout
+    '''
     if filename is None:
         if sys.stdin.isatty():
             print((data.encode('hex')))
@@ -186,14 +198,16 @@ def write(filename, data):
         outfile.write(data)
         outfile.close()
 def checksum(data, default_offset = -127):
+    '''
+    verify data checksum
+    '''
     failed = False
     if len(data) != DATASIZE:
         filename = data
         data = read(filename)  # assume it's a file and not raw data
     else:
         filename = None
-    for index in range(len(CHECKBYTES)):
-        checkbyte = CHECKBYTES[index]
+    for index, checkbyte in enumerate(CHECKBYTES):
         # final checkbyte is sum of *all* bytes
         offset = 0 if index == len(CHECKBYTES) - 1 else checkbyte + default_offset
         check = sum(map(ord, data[offset:checkbyte])) & 0xff
@@ -207,6 +221,11 @@ def checksum(data, default_offset = -127):
                 data = data[:checkbyte] + chr(check) + data[checkbyte + 1:]
     return failed if filename else data
 def clone(action = None, filename = None, port = None):
+    '''
+    clone radio data in two steps: read, followed by write or modwrite
+
+    other options also, primarily for debugging
+    '''
     if action in ['read', 'write', 'modwrite']:
         port = serial.Serial(port or PORTS[0], baudrate = 19200,
                              stopbits = 2, timeout = 30)
@@ -228,6 +247,13 @@ def clone(action = None, filename = None, port = None):
         logging.error('must specify "read" or "write"')
         sys.exit(1)
 def freeband_mod(data, modded):
+    '''
+    modifications for RX and TX outside of HAM bands
+
+    see https://web.archive.org/web/20240513044831/
+     https://www.hayseed.net/~jpk5lad/K5LAD%20files/
+      Yaesu_VX-7R/VX-7%20downloads/VX7%20Commander%20v.10/MODS.txt
+    '''
     modbyte = ord(data[10])
     moddedbyte = ord(data[6])
     hardware_setting = 0xe8 if modded else [moddedbyte, 0xe0][moddedbyte == 0xe8]
@@ -244,15 +270,24 @@ def freeband_mod(data, modded):
         moddedbyte = hardware_setting
     return data[:6] + chr(moddedbyte) + data[7:10] + chr(modbyte) + data[11:]
 def dump(filename = None, port = None):
+    '''
+    dump out a clone file to stdout, in chunks of 32 characters
+    '''
     data = rawdump(filename)
     length = len(data)
     for index in range(0, len(data), 32):
         print(('%04x: %s' % (index, data[index:index + 32].encode('utf8'))))
 def rawdump(filename = None, port = None):
+    '''
+    direct translation of clone file to character set 0
+    '''
     data = read(filename)
-    translation_table = pad(CHARACTERS['vx7r'], 256, '.')
+    translation_table = CHARACTERS['vx7r'][:256]
     return ''.join([translation_table[ord(l)] for l in data])
 def vxwrite(filename = None, port = None, freeband = False, modded = False):
+    '''
+    write out clone file to radio
+    '''
     data = checksum(freeband_mod(read(filename), modded))
     if len(data) != DATASIZE:
         logging.error('incorrect data length: %d', len(data))
@@ -267,7 +302,10 @@ def vxwrite(filename = None, port = None, freeband = False, modded = False):
     serialwrite(port, data[10:10 + 8])
     serialwrite(port, data[10 + 8:], final_block = True)
     port.close()
-def vxread(filename = None, port = None):
+def vxread(filename=None, port=None):
+    '''
+    read data from radio and write to file or stdout
+    '''
     input('''Instructions:
         1) While holding MON-F, power on VX-7R
         2) Hit <Enter> on computer keyboard
