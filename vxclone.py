@@ -27,10 +27,11 @@ KANJI = [  # box, 0x56d7, used as placeholder for unidentified Kanji
     #  https://www.chinese-tools.com/tools/sinograms.html?r)
     # (map hex to character and definition at
     #  https://unicode-explorer.com/c/611b)
-    # love, voltage, Italy,  place,  town,   raise,  one,    briar,
+    # love, voltage, Italy, place,  town,   raise,  one,    briar,
     0x611b, 0x5727, 0x4f0a, 0x4f4d, 0x4e95, 0x80b2, 0x4e00, 0x8328,
     # England, defense, exceed, yen, far,   across, ridge,  pour,
     0x82f1, 0x885b, 0x8d8a, 0x5186, 0x9060, 0x6a2a, 0x5ca1, 0x6c96,
+    # house, warm,  tone,   change, song,   river,  fire,   fragrant
     0x5c4b, 0x6e29, 0x97f3, 0x5316, 0x6b4c, 0x6cb3, 0x706b, 0x9999,
     0x9e7f, 0x8cc0, 0x6d77, 0x676e, 0x9694, 0x5b66, 0x6f5f, 0x9593,
     0x95a2, 0x83c5, 0x5ca9, 0x5893, 0x6a5f, 0x6c17, 0x57ce, 0x5c90,
