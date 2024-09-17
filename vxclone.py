@@ -20,8 +20,50 @@ PORTS = [os.path.join(DEV, port) for port in os.listdir(DEV)
 ACK = chr(6)
 DATASIZE = 16211
 CHECKBYTES = [0x611, 0x691, 0x3f52]
-HIRAGANA = ''.join([chr(n) for n in range(0x3040, 0x30a0)])
-KATAKANA = ''.join([chr(n) for n in range(0x30a0, 0x3100)])
+KANA_ORDER = [  # https://en.wikipedia.org/wiki/Gojuon
+ 'A', 'I', 'U', 'E', 'O',
+ 'KA', 'KI', 'KU', 'KE', 'KO',
+ 'SA', 'SHI', 'SU', 'SE', 'SO',
+ 'TA', 'CHI', 'TSU', 'TE', 'TO',
+ 'NA', 'NI', 'NU', 'NE', 'NO',
+ 'HA', 'HI', 'FU', 'HE', 'HO',
+ 'MA', 'MI', 'MU', 'ME', 'MO',
+ 'YA', 'YU', 'YO',  # obsolete yi and ye removed
+ 'RA', 'RI', 'RU', 'RE', 'RO',
+ 'WA', 'WO',  # obsolete wi, wu, and we removed
+ 'N',
+ # the following are in VX7R order
+ 'STOP', 'COMMA',
+ 'GA', 'GI', 'GU', 'GE', 'GO',
+ 'ZA', 'ZHI', 'ZU', 'ZE', 'ZO',
+ 'DA', 'JI', 'DZU', 'DE', 'DO',
+ 'BA', 'BI', 'BU', 'BE', 'BO',
+ 'PA', 'PI', 'PU', 'PE', 'PO',
+ # sutegana
+ 'a', 'i', 'u', 'e', 'o',
+ 'ya', 'yu', 'yo',
+ 'tsu',
+]
+UNICODE_ORDER = [
+ 'a', 'A', 'i', 'I', 'u', 'U', 'e', 'E', 'o', 'O',
+ 'KA', 'GA', 'KI', 'GI', 'KU', 'GU', 'KE', 'GE', 'KO', 'GO',
+ 'SA', 'ZA', 'SHI', 'ZHI', 'SU', 'ZU', 'SE', 'ZE', 'SO', 'ZO',
+ 'TA', 'DA', 'CHI', 'JI', 'tsu', 'TSU', 'DZU', 'TE', 'DE', 'TO', 'DO',
+ 'NA', 'NI', 'NU', 'NE', 'NO',
+ 'HA', 'BA', 'PA',
+ 'HI', 'BI', 'PI',
+ 'FU', 'BU', 'PU',
+ 'HE', 'BE', 'PE',
+ 'HO', 'BO', 'PO',
+ 'MA', 'MI', 'MU', 'ME', 'MO',
+ 'ya', 'YA', 'yu', 'YU', 'yo', 'YO',
+ 'RA', 'RI', 'RU', 'RE', 'RO',
+ 'wa', 'WA', 'WI', 'WE', 'WO', 'N',
+]
+HIRAGANA = dict(zip(UNICODE_ORDER, [chr(n) for n in range(0x3041, 0x3094)]))
+HIRAGANA['COMMA'] = '\u3001'  # CJK comma
+HIRAGANA['STOP'] = '\u3002'  # CJK full stop
+KATAKANA = dict(zip(UNICODE_ORDER, [chr(n) for n in range(0x30a1, 0x30f4)]))
 KANJI = [  # box, 0x56d7, used as placeholder for unidentified Kanji
     # (lookup C1 character images by radical at
     #  https://www.chinese-tools.com/tools/sinograms.html?r)
@@ -94,52 +136,9 @@ CHARACTERS = { # two character sets, 0 and 1, total 512 characters
         '\u03bc\u03c0\u03c6\u03c9\u03a9\u2103\u2109\u00a3' \
         '\u00b1\u222b\u266a\u266b\u266d\u23b5\u300c\u300d' \
         '\u00b7\u2642\u2640\u3012',
-    'hiragana': (
-        HIRAGANA[0x2:0xb:2] +
-        HIRAGANA[0xb:0x14:2] +
-        HIRAGANA[0x15:0x1e:2] +
-        HIRAGANA[0x1f:0x22:2] +
-        HIRAGANA[0x24:0x29] +
-        HIRAGANA[0x2a:0x2f:2] +
-        HIRAGANA[0x2f:0x3c:3] +
-        HIRAGANA[0x3f:0x43] +
-        HIRAGANA[0x44:0x49:2] +
-        HIRAGANA[0x49:0x4e] +
-        HIRAGANA[0x4f:0x54] +
-        HIRAGANA[0x0c:0x15:2] +
-        HIRAGANA[0x16:0x1f:2] +
-        HIRAGANA[0x20:0x23:2] +
-        HIRAGANA[0x25:0x2a:2] +
-        '\u3002\u3001' +  # CJK full stop and comma
-        HIRAGANA[0x30:0x3d:3] +
-        HIRAGANA[0x31:0x3e:3] +
-        HIRAGANA[0x1:0xa:2] +
-        HIRAGANA[0x43:0x48:2] +
-        HIRAGANA[0x23]
-    ),
-    'katakana': (
-        KATAKANA[0x2:0xb:2] +
-        KATAKANA[0xb:0x14:2] +
-        KATAKANA[0x15:0x1e:2] +
-        KATAKANA[0x1f:0x22:2] +
-        KATAKANA[0x24:0x29] +
-        KATAKANA[0x2a:0x2f:2] +
-        KATAKANA[0x2f:0x3c:3] +
-        KATAKANA[0x3f:0x43] +
-        KATAKANA[0x44:0x49:2] +
-        KATAKANA[0x49:0x4e] +
-        KATAKANA[0x4f] +
-        KATAKANA[0x52:0x54] +  # drop obsolete wi and we
-        KATAKANA[0x0c:0x15:2] +
-        KATAKANA[0x16:0x1f:2] +
-        KATAKANA[0x20:0x23:2] +
-        KATAKANA[0x25:0x2a:2] +
-        KATAKANA[0x30:0x3d:3] +
-        KATAKANA[0x31:0x3e:3] +
-        KATAKANA[0x1:0xa:2] +
-        KATAKANA[0x43:0x48:2] +
-        KATAKANA[0x23]
-    ),
+    'hiragana': ''.join([HIRAGANA[k] for k in KANA_ORDER]),
+    'katakana': ''.join([KATAKANA[k] for k in KANA_ORDER
+                        if k not in ['STOP', 'COMMA']])
 }
 CHARACTERS['vx7r'] = CHARACTERS['digits'] + ' ' + CHARACTERS['alphabetic'] + \
     CHARACTERS['alphabetic'].lower() + CHARACTERS['symbols'] + \
