@@ -80,9 +80,10 @@ KANJI = [  # box, 0x56d7, used as placeholder for unidentified Kanji
     0x6587, 0x9593, 0x5175, 0x4e26, 0x653e, 0x82b3, 0x9632, 0x5317,
     # curtain, root, every, ten thousand, palace, negative, name, tree,
     0x5e4c, 0x672c, 0x6bce, 0x4e07, 0x5bae, 0x7121, 0x540d, 0x6728,
-    #     ,       , leaf,
+    # valley, open country, leaf, yang, enmesh, pear, good, grove,
     0x8c37, 0x91ce, 0x8449, 0x967d, 0x7d61, 0x68a8, 0x826f, 0x6797,
-    0x9234, 0x9023, 0x8def, 0x516d, 0x548c,
+    # bell, connect, road,  six,    harmony
+    0x9234, 0x9023, 0x8def, 0x516d, 0x548c
 ]
 CHARACTERS = { # two character sets, 0 and 1, total 512 characters
 # from http://hse.dyndns.org/hiroto/RFY_LAB/vx7/e/vx7_8510.htm
